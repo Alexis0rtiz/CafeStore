@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - CafeStore ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <div class="auth-wrapper"
+        style="align-items: flex-start; padding-top: 40px; padding-bottom: 40px; overflow-y: auto;">
+        <div class="glass-container auth-box" style="max-width: 450px;">
+            <h2>Regístrate en CafeStore</h2>
+            <p>Crea tu cuenta ingresando tus datos</p>
+
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Juan Pérez">
+                </div>
+                <div class="form-group">
+                    <label for="username">Usuario (Login Opcional)</label>
+                    <input type="text" id="username" name="username" required placeholder="juanperez123">
+                </div>
+                <div class="form-group">
+                    <label for="correo">Correo Electrónico</label>
+                    <input type="email" id="correo" name="correo" required placeholder="tu@correo.com">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono (10 dígitos)</label>
+                    <input type="tel" id="telefono" name="telefono" required placeholder="5512345678"
+                        pattern="[0-9]{10}">
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                        <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="sexo">Sexo</label>
+                        <select id="sexo" name="sexo" required
+                            style="width: 100%; padding: 12px; background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; color: var(--text-light); font-size: 14px; outline: none;">
+                            <option value="M" style="color: black;">Masculino</option>
+                            <option value="F" style="color: black;">Femenino</option>
+                            <option value="O" style="color: black;">Otro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+                    <input type="password" id="contrasena" name="contrasena" required
+                        placeholder="Crea una contraseña segura">
+                </div>
+                <p id="regErrorMsg" style="color: var(--danger); display: none; margin-bottom: 12px; font-size: 14px;">
+                </p>
+                <button type="submit" class="btn-primary" id="btnRegister">Registrarse</button>
+                <div style="margin-top: 15px; text-align: center;">
+                    <a href="login.html"
+                        style="color: var(--text-muted); font-size: 14px; text-decoration: none; transition: color 0.3s;"
+                        onmouseover="this.style.color='var(--primary)'"
+                        onmouseout="this.style.color='var(--text-muted)'">¿Ya tienes cuenta? Inicia sesión aquí</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Success -->
+    <div id="successModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
+        <div class="glass-container" style="text-align: center; padding: 40px; max-width: 400px;">
+            <div style="font-size: 48px; color: var(--success); margin-bottom: 20px;">✓</div>
+            <h3 style="margin-bottom: 15px;">¡Registro Exitoso!</h3>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Tu cuenta ha sido creada correctamente. Ahora
+                puedes iniciar sesión.</p>
+            <button class="btn-primary" onclick="window.location.href='login.html'">Ir al Login</button>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

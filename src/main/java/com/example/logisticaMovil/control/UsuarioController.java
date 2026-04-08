@@ -9,10 +9,13 @@ import com.example.logisticaMovil.model.Usuario;
 import com.example.logisticaMovil.repository.UsuarioRepository;
 import java.util.Optional;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -79,7 +82,11 @@ public class UsuarioController {
                     .body("El correo ya está registrado");
         }
 
-        String passwordPlano = PasswordGenerator.generate(10);
+        String passwordPlano = request.getContrasena();
+        if (passwordPlano == null || passwordPlano.trim().isEmpty()) {
+            passwordPlano = PasswordGenerator.generate(10);
+        }
+
         String passwordEncriptada = passwordEncoder.encode(passwordPlano);
 
         Usuario usuario = usuarioService.registrarUsuario(request, passwordEncriptada);
@@ -106,5 +113,38 @@ public class UsuarioController {
     @GetMapping("/usuarios")
     public ResponseEntity<List<UsuarioDTO>> obtenerUsuarios() {
         return ResponseEntity.ok(usuarioService.obtenerTodosLosUsuarios());
+    }
+
+    @PostMapping("/recuperar-contrasena")
+    public ResponseEntity<?> recuperarContrasena(@RequestBody Map<String, String> request) {
+        String correo = request.get("correo");
+        String telefono = request.get("telefono");
+        String nuevaContrasena = request.get("nuevaContrasena");
+
+        if (correo == null || telefono == null || nuevaContrasena == null) {
+            return ResponseEntity.badRequest().body("Datos incompletos");
+        }
+
+        boolean exito = usuarioService.recuperarContrasena(correo, telefono, nuevaContrasena);
+        if (exito) {
+            return ResponseEntity.ok("Contraseña restablecida exitosamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Correo o teléfono incorrectos");
+        }
+    }
+
+    @PutMapping("/usuarios/{id}/rol")
+    public ResponseEntity<?> cambiarRol(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        String nuevoRol = request.get("rol");
+        if (nuevoRol == null || nuevoRol.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body("El rol es requerido");
+        }
+
+        boolean exito = usuarioService.cambiarRol(id, nuevoRol);
+        if (exito) {
+            return ResponseEntity.ok("Rol actualizado correctamente");
+        } else {
+            return ResponseEntity.badRequest().body("No se pudo actualizar el rol. Verifica el ID o el Rol ingresado.");
+        }
     }
 }

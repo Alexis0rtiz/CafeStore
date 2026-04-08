@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show add task button only for ADMIN or HOST
     if (usuario.rol === 'ADMIN' || usuario.rol === 'HOST') {
         document.getElementById('btnNuevaTarea').style.display = 'inline-block';
+        document.getElementById('btnGestionarUsuarios').style.display = 'inline-block';
     }
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -57,6 +58,108 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     btnClose.addEventListener('click', () => modal.style.display = 'none');
+
+    // User Management Modal
+    const usuariosModal = document.getElementById('usuariosModal');
+    const btnGestionarUsuarios = document.getElementById('btnGestionarUsuarios');
+    const closeUsuariosModal = document.getElementById('closeUsuariosModal');
+
+    if (btnGestionarUsuarios) {
+        btnGestionarUsuarios.addEventListener('click', () => {
+            usuariosModal.style.display = 'flex';
+            cargarTablaUsuarios();
+        });
+    }
+    if (closeUsuariosModal) {
+        closeUsuariosModal.addEventListener('click', () => {
+            usuariosModal.style.display = 'none';
+        });
+    }
+
+    async function cargarTablaUsuarios() {
+        try {
+            const res = await fetch('/api/usuarios', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const usuarios = await res.json();
+                const tbody = document.getElementById('usuariosTableBody');
+                tbody.innerHTML = '';
+
+                usuarios.forEach(u => {
+                    // Prevenir que un ADMIN cambie rol de un HOST (seguridad en UI)
+                    const disableHostSelect = (usuario.rol === 'ADMIN' && u.rol === 'HOST') ? 'disabled' : '';
+
+                    const isHost = u.rol === 'HOST' ? 'selected' : '';
+                    const isAdmin = u.rol === 'ADMIN' ? 'selected' : '';
+                    const isEmpleado = u.rol === 'EMPLEADO' ? 'selected' : '';
+                    const isUsuario = u.rol === 'USUARIO' ? 'selected' : '';
+
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+                    tr.innerHTML = `
+                        <td style="padding: 10px;">${u.nombre}</td>
+                        <td style="padding: 10px; font-size:12px; color:var(--text-muted);">${u.correo}</td>
+                        <td style="padding: 10px;">
+                            <select id="roleSelect_${u.id}" ${disableHostSelect} style="padding: 5px; background: rgba(0,0,0,0.3); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;">
+                                ${(usuario.rol === 'HOST') ? `<option value="HOST" ${isHost}>HOST</option>` : ''}
+                                <option value="ADMIN" ${isAdmin}>ADMIN</option>
+                                <option value="EMPLEADO" ${isEmpleado}>EMPLEADO</option>
+                                <option value="USUARIO" ${isUsuario}>USUARIO</option>
+                            </select>
+                        </td>
+                        <td style="padding: 10px;">
+                            <button onclick="window.actualizarRol(${u.id})" class="btn-primary" style="padding: 5px 10px; font-size: 12px; min-width: auto;" ${disableHostSelect}>Guardar</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        } catch (err) {
+            console.error('Error cargando usuarios para gestión', err);
+        }
+    }
+
+    window.actualizarRol = async function (usuarioId) {
+        const select = document.getElementById(`roleSelect_${usuarioId}`);
+        const nuevoRol = select.value;
+        const btn = select.parentElement.nextElementSibling.querySelector('button');
+
+        btn.textContent = '...';
+        btn.disabled = true;
+
+        try {
+            const res = await fetch(`/api/usuarios/${usuarioId}/rol`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ rol: nuevoRol })
+            });
+
+            if (res.ok) {
+                btn.textContent = 'OK';
+                btn.style.background = 'var(--success)';
+                btn.style.borderColor = 'var(--success)';
+                setTimeout(() => {
+                    btn.textContent = 'Guardar';
+                    btn.style.background = 'var(--primary)';
+                    btn.style.borderColor = 'var(--primary)';
+                    btn.disabled = false;
+                }, 2000);
+            } else {
+                alert('No se pudo cambiar el rol.');
+                btn.textContent = 'Guardar';
+                btn.disabled = false;
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error de conexión.');
+            btn.textContent = 'Guardar';
+            btn.disabled = false;
+        }
+    };
 
     // Load Tasks
     cargarTareas();

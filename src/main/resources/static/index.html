@@ -24,6 +24,9 @@
 
     <div class="controls">
         <button id="btnNuevaTarea" class="btn-add">+ Nueva Tarea</button>
+        <button id="btnGestionarUsuarios" class="btn-secondary"
+            style="display: none; margin-left: 10px; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px 20px; font-weight: 500; cursor: pointer; transition: all 0.3s ease;">Gestión
+            de Usuarios</button>
     </div>
 
     <main class="kanban-board">
@@ -76,6 +79,28 @@
                 </div>
                 <button type="submit" class="btn-primary">Guardar Tarea</button>
             </form>
+        </div>
+    </div>
+
+    <!-- Modal Gestionar Usuarios -->
+    <div id="usuariosModal" class="modal-overlay">
+        <div class="glass-container modal-content relative" style="max-width: 600px; width: 90%;">
+            <button id="closeUsuariosModal" class="close-btn">&times;</button>
+            <h2 style="margin-bottom: 20px;">Administración de Roles</h2>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <th style="padding: 10px;">Nombre</th>
+                            <th style="padding: 10px;">Correo</th>
+                            <th style="padding: 10px;">Rol</th>
+                            <th style="padding: 10px;">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

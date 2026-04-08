@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - CafeStore ERP</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <div class="auth-wrapper">
+        <div class="glass-container auth-box">
+            <h2>Recuperar Contraseña</h2>
+            <p>Ingresa tus datos para crear una nueva contraseña</p>
+
+            <form id="recuperarForm">
+                <div class="form-group">
+                    <label for="rec_correo">Correo Electrónico (Asociado a la cuenta)</label>
+                    <input type="email" id="rec_correo" required placeholder="tu@correo.com">
+                </div>
+                <div class="form-group">
+                    <label for="rec_telefono">Número de Teléfono</label>
+                    <input type="tel" id="rec_telefono" required placeholder="5512345678" pattern="[0-9]{10}">
+                </div>
+                <div class="form-group" style="margin-top: 20px;">
+                    <label for="rec_nueva_contrasena">Nueva Contraseña</label>
+                    <input type="password" id="rec_nueva_contrasena" required placeholder="••••••••">
+                </div>
+
+                <p id="recErrorMsg" style="color: var(--danger); display: none; margin-bottom: 12px; font-size: 14px;">
+                </p>
+                <p id="recSuccessMsg"
+                    style="color: var(--success); display: none; margin-bottom: 12px; font-size: 14px;">¡Contraseña
+                    restablecida! Redirigiendo al login...</p>
+
+                <button type="submit" class="btn-primary" id="btnRecuperar">Restablecer Contraseña</button>
+                <div style="margin-top: 15px; text-align: center;">
+                    <a href="login.html"
+                        style="color: var(--text-muted); font-size: 14px; text-decoration: none; transition: color 0.3s;"
+                        onmouseover="this.style.color='var(--primary)'"
+                        onmouseout="this.style.color='var(--text-muted)'">Volver al Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+</body>
+
+</html>

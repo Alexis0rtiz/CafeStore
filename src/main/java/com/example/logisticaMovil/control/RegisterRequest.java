@@ -17,6 +17,7 @@ public class RegisterRequest {
     private String sexo;
     private String correo;
     private String telefono;
+    private String contrasena;
 
     public String getNombre() {
         return nombre;
@@ -42,6 +43,10 @@ public class RegisterRequest {
         return telefono;
     }
 
+    public String getContrasena() {
+        return contrasena;
+    }
+
     // SETTERS
     public void setNombre(String nombre) {
         this.nombre = nombre;
@@ -65,5 +70,9 @@ public class RegisterRequest {
 
     public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 }

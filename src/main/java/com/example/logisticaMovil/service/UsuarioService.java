@@ -9,10 +9,9 @@ import java.sql.Timestamp;
 import java.util.Optional;
 import com.example.logisticaMovil.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.stereotype.Service;
 import org.springframework.stereotype.Service;
 import com.example.logisticaMovil.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.example.logisticaMovil.dto.UsuarioDTO;
@@ -27,6 +26,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public Optional<Usuario> validarLogin(String correo, String contrasena) {
         Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
         System.out.println("Correo recibido: " + correo);
@@ -34,7 +36,7 @@ public class UsuarioService {
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get();
             System.out.println("Hash en DB: " + usuario.getContrasena());
-            boolean match = BCrypt.checkpw(contrasena, usuario.getContrasena());
+            boolean match = passwordEncoder.matches(contrasena, usuario.getContrasena());
             System.out.println("¿Coincide la contraseña? " + match);
             if (match) {
                 usuario.setUltimaSesion(new Timestamp(System.currentTimeMillis()));
@@ -48,7 +50,7 @@ public class UsuarioService {
     }
 
     public String encriptarContrasena(String contrasena) {
-        return BCrypt.hashpw(contrasena, BCrypt.gensalt());
+        return passwordEncoder.encode(contrasena);
     }
 
     public Usuario registrarUsuario(RegisterRequest request, String passwordEncriptada) {
@@ -71,5 +73,34 @@ public class UsuarioService {
                 .map(u -> new UsuarioDTO(u.getId(), u.getNombre(), u.getCorreo(), u.getRol().name(), u.getTelefono(),
                         u.getUltimaSesion() != null ? u.getUltimaSesion().toInstant() : null))
                 .collect(Collectors.toList());
+    }
+
+    public boolean recuperarContrasena(String correo, String telefono, String nuevaContrasena) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(correo);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            if (usuario.getTelefono() != null && usuario.getTelefono().equals(telefono)) {
+                usuario.setContrasena(encriptarContrasena(nuevaContrasena));
+                usuarioRepository.save(usuario);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean cambiarRol(Long usuarioId, String nuevoRol) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(usuarioId);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            try {
+                Usuario.Rol rolEnum = Usuario.Rol.valueOf(nuevoRol.toUpperCase());
+                usuario.setRol(rolEnum);
+                usuarioRepository.save(usuario);
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        }
+        return false;
     }
 }
