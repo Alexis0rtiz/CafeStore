@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/login", "/api/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/login", "/api/register", "/api/recuperar-contrasena").permitAll()
                         .requestMatchers("/", "/index.html", "/login.html", "/css/**", "/js/**", "/error").permitAll()
                         .requestMatchers("/api/host/**").hasRole("HOST")
                         .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "HOST")
